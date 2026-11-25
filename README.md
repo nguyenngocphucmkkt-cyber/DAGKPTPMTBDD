@@ -165,10 +165,11 @@ Checklist còn lại trước khi nộp:
 - [x] Có kiểm thử cử chỉ/trạng thái/danh sách dài và review dọc/ngang.
 - [x] README có dữ liệu, kiến trúc, tọa độ, hit-testing, trạng thái, hiệu năng và nhật ký AI.
 - [ ] Thử cảm giác pinch/pan trên điện thoại thật; kiểm tra thêm thiết bị/API nếu có.
-- [ ] Clone sạch sang thư mục khác và xác minh build theo hướng dẫn.
+- [x] Clone GitHub công khai sang thư mục khác; đối chiếu mã với bản nguồn sạch đã build thành công trong Android Studio.
 - [ ] Quay video 1–5 phút, đưa đường dẫn truy cập được vào README.
-- [x] Có 5 commit thực tế sau mốc rà soát yêu cầu; tiếp tục commit có nội dung thực nếu còn thay đổi. Không sửa thời gian hoặc tạo commit rỗng để đủ số.
-- [ ] Push bản cuối và kiểm tra quyền truy cập repository/video theo quy định nộp bài.
+- [x] Có 6 commit thực tế sau mốc xác nhận build sạch và GitHub; tiếp tục commit có nội dung thực nếu còn thay đổi. Không sửa thời gian hoặc tạo commit rỗng để đủ số.
+- [x] Push mã nguồn và tài liệu lên main; repository Public, truy cập không đăng nhập và clone HTTPS thành công.
+- [ ] Bổ sung video và kiểm tra quyền truy cập video khi sinh viên quay xong.
 
 
 ## 11. Đối chiếu đề thi ngày 25/11/2026
@@ -193,19 +194,32 @@ Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm ch
 | Tái sử dụng tài nguyên đồ họa | Paint/Path/RectF/Shader/Typeface tạo ngoài onDraw; không dựng 200 View trên sơ đồ |
 | Build/chạy được | Đã build/cài/chạy qua Android Studio, 7 instrumentation tests đạt trên API 36 |
 | README và nhật ký AI | Có các mục 1–9; đường dẫn video còn để lại theo yêu cầu sinh viên |
-| 5–7 commit có ý nghĩa | Có 5 sau commit báo cáo này; commit mới dùng tiếng Việt, giữ thời gian thực; không tạo commit rỗng |
-| Repository và mã nguồn có thể truy cập để nộp | Các thay đổi mới vẫn ở Git cục bộ, chưa push; quyền truy cập giảng viên chưa xác minh |
+| 5–7 commit có ý nghĩa | Có 6 sau commit xác minh cuối; commit mới dùng tiếng Việt, giữ thời gian thực; không tạo commit rỗng |
+| Repository và mã nguồn có thể truy cập để nộp | Đã push main, chuyển Public theo yêu cầu sinh viên; API không đăng nhập và clone HTTPS xác minh truy cập công khai |
 
 ### Kiểm tra bản xuất sạch và giới hạn bằng chứng
 
 - Đã xuất cây mã nguồn đã commit bằng git archive sang thư mục mới, không mang theo build/.gradle/.idea; chỉ thêm local.properties cho SDK của máy.
 - Git clone cục bộ qua công cụ dòng lệnh bị lỗi helper MSYS; không gọi lượt này là clone thành công.
-- Gradle CLI tại bản xuất sạch dừng trước biên dịch vì báo project directory không ghi được trong môi trường thực thi giới hạn quyền. Vì vậy **chưa xác minh build từ bản xuất sạch**, không suy diễn thành lỗi mã nguồn hay đánh dấu lượt này đạt.
+- Gradle CLI tại bản xuất sạch dừng trước biên dịch vì báo project directory không ghi được trong môi trường thực thi giới hạn quyền. Lượt CLI này không được đánh dấu đạt; sau đó đã xác minh lại bằng Android Studio như kết quả cập nhật dưới đây.
 - Các build và 7 tests xác nhận ở trên được chạy bằng Android Studio/AndroidJUnitRunner trên bản dự án chính. Kiểm tra lại trên môi trường khác và điện thoại thật là khuyến nghị kiểm chứng thêm; không phải một chức năng bị thiếu trong đề.
-- Chưa push các commit mới, chưa xác minh quyền truy cập từ tài khoản giảng viên; ngoài video, đây là phần nộp bài còn phải hoàn tất.
+- Trạng thái chưa push/riêng tư ở lượt rà soát trước đã được giải quyết: các commit đã đẩy lên main, repo hiện Public và có thể clone không đăng nhập. Video vẫn do sinh viên thực hiện sau.
 
 ### Thông điệp commit
 
 Ba commit phát triển cục bộ ban đầu đã được đổi thông điệp sang tiếng Việt, giữ nguyên cây mã nguồn, tác giả và thời gian. Commit khởi tạo `Initial commit` đã có trên GitHub được giữ nguyên; không viết lại lịch sử đã công bố hoặc force-push. Commit báo cáo này và các commit mới tiếp theo dùng tiếng Việt.
 
 Nhật ký AI bổ sung: Codex rà lại toàn văn đề PDF, đối chiếu mã/kiểm thử và file được Git theo dõi; thử bản xuất sạch, ghi rõ lỗi môi trường thay vì đánh dấu pass; đổi thông điệp commit cục bộ theo yêu cầu của sinh viên. Video không được tạo trong lượt này.
+
+
+## 12. Xác nhận hoàn tất build sạch và GitHub
+
+- Đã push các commit phát triển tiếng Việt lên `main`; không force-push hoặc thay đổi commit khởi tạo đã công bố.
+- Theo yêu cầu cụ thể của sinh viên, repository đã chuyển từ Private sang Public. API GitHub không dùng xác thực trả `private: false`; clone HTTPS không đăng nhập đã thành công.
+- Repository: https://github.com/nguyenngocphucmkkt-cyber/DAGKPTPMTBDD
+- Tạo một bản nguồn riêng bằng git archive từ commit `9269338`, không mang theo `.idea`, `.gradle`, build hoặc APK cũ; chỉ bổ sung local.properties trỏ SDK máy kiểm tra.
+- Mở bản riêng trong Android Studio, Gradle Sync đạt, `:app:assembleDebug` báo **BUILD SUCCESSFUL in 15s**, **33 actionable tasks: 33 executed**. APK mới được tạo, không sử dụng kết quả build cũ của dự án chính.
+- Đối chiếu 61 file được Git theo dõi với commit: nội dung khớp sau chuẩn hóa LF/CRLF. Bản clone HTTPS từ GitHub cũng ở đúng commit `9269338`. Commit xác nhận tiếp theo chỉ cập nhật README, không thay đổi mã ứng dụng đã kiểm chứng.
+- Không coi lượt Gradle CLI bị giới hạn quyền là pass; bằng chứng build sạch là lượt Android Studio nêu trên. Bộ 7 instrumentation tests đạt ở mốc trước vẫn là bằng chứng kiểm thử chức năng hiện tại.
+- Nhật ký AI bổ sung: Codex chuẩn bị nguồn sạch, dùng Android Studio để Sync/build, push qua IDE sau khi sinh viên tự đăng nhập; công khai repo theo lựa chọn rõ ràng của sinh viên và kiểm tra bằng API/clone không xác thực. Sinh viên tự xác nhận Trust Project; không thay đổi ngoại lệ Defender để build.
+- Ngoài việc sinh viên quay/chèn đường dẫn video, các mục mã nguồn, build, tài liệu, số lượng commit và truy cập repo đã có bằng chứng xác minh. Thử trên điện thoại thật vẫn là khuyến nghị bổ sung.
