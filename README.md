@@ -167,5 +167,45 @@ Checklist còn lại trước khi nộp:
 - [ ] Thử cảm giác pinch/pan trên điện thoại thật; kiểm tra thêm thiết bị/API nếu có.
 - [ ] Clone sạch sang thư mục khác và xác minh build theo hướng dẫn.
 - [ ] Quay video 1–5 phút, đưa đường dẫn truy cập được vào README.
-- [ ] Hoàn thiện lịch sử 5–7 commit có ý nghĩa theo các mốc thực tế; không tạo commit giả để đủ số.
+- [x] Có 5 commit thực tế sau mốc rà soát yêu cầu; tiếp tục commit có nội dung thực nếu còn thay đổi. Không sửa thời gian hoặc tạo commit rỗng để đủ số.
 - [ ] Push bản cuối và kiểm tra quyền truy cập repository/video theo quy định nộp bài.
+
+
+## 11. Đối chiếu đề thi ngày 25/11/2026
+
+Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm cho thiết bị di động do giảng viên cung cấp. Video được để lại theo yêu cầu của sinh viên; mục này không khẳng định hồ sơ đã nộp.
+
+| Yêu cầu | Kết quả rà soát / bằng chứng |
+|---|---|
+| Chọn một đề tài, mock data | Đề tài phòng chiếu, dữ liệu cố định, không cần API/database |
+| 150–250 đối tượng theo barem; một Canvas | 200 đối tượng, một SeatMapView; 120 thường + 60 VIP + 20 cặp |
+| Phân khu, lối đi, màn chiếu, nhãn | Có trong dữ liệu hình học và Canvas; đã review dọc/ngang |
+| Ít nhất ba trạng thái, phản hồi chọn/bỏ chọn | Trống/đã đặt/khóa và lớp trạng thái đang chọn; bỏ chọn không đổi trạng thái gốc |
+| Pan một ngón, giới hạn biên | Có touch slop, đổi pointer và clamp; drag không chọn nhầm |
+| Pinch hai ngón đúng tâm, min/max | ScaleGestureDetector và MapTransform; tỷ lệ fit–5×; instrumentation pinch đạt |
+| Hit-testing sau pan/zoom và gần biên | Đổi tọa độ nghịch trước kiểm bounds; test gần biên sau zoom/pan đạt |
+| Legend, lọc/tìm kiếm, xóa lọc và kết quả rỗng | Có chú thích trạng thái, lọc loại/còn trống, tìm ID; làm mờ, giữ lựa chọn, báo kết quả rỗng |
+| Reset View mượt, giữ bộ lọc/lựa chọn | Animator 280ms; test reset giữ query/filter/ID chọn đạt |
+| Bottom Sheet thu gọn/mở rộng, nội dung cuộn | BottomSheetBehavior + RecyclerView; mở rộng khoảng 55% vùng khả dụng |
+| Đồng bộ hai chiều, định vị/xóa từng mục | Test định vị/xóa row đạt; UI đã review lựa chọn ngoài bộ lọc |
+| Không trùng/mất mục sau lọc/reset/xoay | ViewModel + Bundle + LinkedHashSet; test recreate danh sách hơn 100 mục và thứ tự đạt |
+| Tách dữ liệu/trạng thái/lớp vẽ | Seat/Repository, ViewModel, MapTransform và SeatMapView riêng |
+| Tái sử dụng tài nguyên đồ họa | Paint/Path/RectF/Shader/Typeface tạo ngoài onDraw; không dựng 200 View trên sơ đồ |
+| Build/chạy được | Đã build/cài/chạy qua Android Studio, 7 instrumentation tests đạt trên API 36 |
+| README và nhật ký AI | Có các mục 1–9; đường dẫn video còn để lại theo yêu cầu sinh viên |
+| 5–7 commit có ý nghĩa | Có 5 sau commit báo cáo này; commit mới dùng tiếng Việt, giữ thời gian thực; không tạo commit rỗng |
+| Repository và mã nguồn có thể truy cập để nộp | Các thay đổi mới vẫn ở Git cục bộ, chưa push; quyền truy cập giảng viên chưa xác minh |
+
+### Kiểm tra bản xuất sạch và giới hạn bằng chứng
+
+- Đã xuất cây mã nguồn đã commit bằng git archive sang thư mục mới, không mang theo build/.gradle/.idea; chỉ thêm local.properties cho SDK của máy.
+- Git clone cục bộ qua công cụ dòng lệnh bị lỗi helper MSYS; không gọi lượt này là clone thành công.
+- Gradle CLI tại bản xuất sạch dừng trước biên dịch vì báo project directory không ghi được trong môi trường thực thi giới hạn quyền. Vì vậy **chưa xác minh build từ bản xuất sạch**, không suy diễn thành lỗi mã nguồn hay đánh dấu lượt này đạt.
+- Các build và 7 tests xác nhận ở trên được chạy bằng Android Studio/AndroidJUnitRunner trên bản dự án chính. Kiểm tra lại trên môi trường khác và điện thoại thật là khuyến nghị kiểm chứng thêm; không phải một chức năng bị thiếu trong đề.
+- Chưa push các commit mới, chưa xác minh quyền truy cập từ tài khoản giảng viên; ngoài video, đây là phần nộp bài còn phải hoàn tất.
+
+### Thông điệp commit
+
+Ba commit phát triển cục bộ ban đầu đã được đổi thông điệp sang tiếng Việt, giữ nguyên cây mã nguồn, tác giả và thời gian. Commit khởi tạo `Initial commit` đã có trên GitHub được giữ nguyên; không viết lại lịch sử đã công bố hoặc force-push. Commit báo cáo này và các commit mới tiếp theo dùng tiếng Việt.
+
+Nhật ký AI bổ sung: Codex rà lại toàn văn đề PDF, đối chiếu mã/kiểm thử và file được Git theo dõi; thử bản xuất sạch, ghi rõ lỗi môi trường thay vì đánh dấu pass; đổi thông điệp commit cục bộ theo yêu cầu của sinh viên. Video không được tạo trong lượt này.
