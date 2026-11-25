@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="5dp" android:paddingBottom="5dp">
+    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/legend_available" android:textColor="#DA85AB" android:textSize="10sp" android:gravity="center"/>
+    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/legend_booked" android:textColor="#B9A2B5" android:textSize="10sp" android:gravity="center"/>
+    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/legend_locked" android:textColor="#9D7F9A" android:textSize="10sp" android:gravity="center"/>
+    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/legend_selected" android:textColor="#FFE5F2" android:textSize="10sp" android:gravity="center"/>
+</LinearLayout>

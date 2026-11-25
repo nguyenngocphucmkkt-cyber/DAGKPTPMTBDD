@@ -1,0 +1,33 @@
+<resources>
+ <string name="app_name">CinemaSeatMap</string>
+ <string name="brand">CINEMA / PHÒNG 01</string>
+ <string name="map_title">Chỗ ngồi của bạn</string>
+ <string name="map_subtitle">Chạm đúp để phóng to · Chụm hai ngón để zoom</string>
+ <string name="room_badge">2D · DOLBY AUDIO</string>
+ <string name="room_capacity">200 ghế · 220 chỗ ngồi</string>
+ <string name="legend_available">● Trống</string>
+ <string name="legend_booked">■ Đã đặt</string>
+ <string name="legend_locked">× Bị khóa</string>
+ <string name="fare_title">Chọn không gian bạn thích</string>
+ <string name="standard_fare">● Thường\n80.000đ</string>
+ <string name="vip_fare">◇ VIP\n120.000đ</string>
+ <string name="couple_fare">▰ Ghế đôi\n200.000đ</string>
+ <string name="couple_note">✓ Hồng sáng: đang chọn · Ghế đôi tính giá cả cặp</string>
+ <string name="zoom_out">Thu nhỏ sơ đồ</string>
+ <string name="zoom_in">Phóng to sơ đồ</string>
+ <string name="reset_view">Toàn cảnh</string>
+ <string name="seat_booked">Ghế này đã được đặt.</string>
+ <string name="seat_locked">Ghế này đang bị khóa.</string>
+ <string name="selection_summary">Đã chọn %1$d mục · %2$sđ</string>
+ <string name="legend_selected">✓ Đang chọn</string>
+
+<string name="filter_all">Tất cả</string><string name="filter_standard">Thường</string><string name="filter_vip">VIP</string><string name="filter_couple">Ghế đôi</string><string name="filter_available">Còn trống</string>
+<string name="search_hint">Tìm mã ghế, ví dụ A3</string><string name="clear_filters">Xóa lọc</string>
+<string name="no_results">Không tìm thấy ghế phù hợp.\nĐổi điều kiện hoặc nhấn Xóa lọc.</string>
+<string name="selected_title">Ghế đã chọn</string><string name="show_details">Chi tiết ↑</string><string name="hide_details">Thu gọn ↓</string>
+<string name="toggle_sheet">Mở hoặc thu gọn danh sách ghế đã chọn</string>
+<string name="no_selection">Chạm vào ghế trống trên sơ đồ để bắt đầu.\nGhế đôi tính giá cho cả cặp.</string>
+<string name="remove_seat">Xóa</string><string name="remove_seat_named">Bỏ chọn ghế %1$s</string>
+<string name="tap_to_locate">Chạm để định vị</string><string name="outside_filter">Ngoài bộ lọc · Chạm để định vị</string>
+<string name="filter_status">%1$s · %2$d/200 ghế · %3$d mục chọn ngoài bộ lọc</string>
+</resources>
