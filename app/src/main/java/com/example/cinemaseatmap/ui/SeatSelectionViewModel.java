@@ -15,6 +15,8 @@ public final class SeatSelectionViewModel extends ViewModel {
     public boolean sheetExpanded;
     public final List<Seat> seats=MockSeatRepository.createSeats();
     private final LinkedHashSet<String> selected=new LinkedHashSet<>();
+    private final Map<String,Seat> byId=new HashMap<>();
+    public SeatSelectionViewModel() { for(Seat seat:seats) byId.put(seat.id,seat); }
     private final MutableLiveData<List<String>> changes=new MutableLiveData<>(Collections.emptyList());
     public LiveData<List<String>> selection() { return changes; }
     public ArrayList<String> selectedIds() { return new ArrayList<>(selected); }
@@ -25,7 +27,10 @@ public final class SeatSelectionViewModel extends ViewModel {
     }
     public void restore(List<String> ids) {
         selected.clear();
-        for(Seat s:seats) if(s.status==Seat.Status.AVAILABLE && ids.contains(s.id)) selected.add(s.id);
+        for(String id:ids) {
+            Seat seat=byId.get(id);
+            if(seat!=null && seat.status==Seat.Status.AVAILABLE) selected.add(id);
+        }
         publish();
     }
     public void setFilter(SeatFilter.Mode value) { if(filter!=value) { filter=value; publish(); } }
@@ -37,10 +42,10 @@ public final class SeatSelectionViewModel extends ViewModel {
     }
     public List<Seat> selectedSeats() {
         List<Seat> result=new ArrayList<>();
-        for(String id:selected) for(Seat s:seats) if(s.id.equals(id)) { result.add(s); break; }
+        for(String id:selected) result.add(byId.get(id));
         return result;
     }
     public void remove(String id) { if(selected.remove(id)) publish(); }
-    public int total() { int total=0; for(Seat s:seats) if(selected.contains(s.id)) total+=s.price; return total; }
+    public int total() { int total=0; for(String id:selected) total+=byId.get(id).price; return total; }
     private void publish() { changes.setValue(Collections.unmodifiableList(new ArrayList<>(selected))); }
 }

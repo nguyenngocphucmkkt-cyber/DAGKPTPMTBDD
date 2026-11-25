@@ -85,6 +85,95 @@ public class SeatGestureTest {
    });
   }
  }
+ @Test public void longSelectionKeepsOrderAndScrollsAfterRecreation() {
+  final java.util.ArrayList<String> expected=new java.util.ArrayList<>();
+  try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    for(int i=vm.seats.size()-1;i>=0;i--) {
+     com.example.cinemaseatmap.model.Seat seat=vm.seats.get(i);
+     if(seat.status==com.example.cinemaseatmap.model.Seat.Status.AVAILABLE) {
+      vm.toggle(seat); expected.add(seat.id);
+     }
+    }
+    com.google.android.material.bottomsheet.BottomSheetBehavior.from(a.findViewById(R.id.selection_sheet))
+       .setState(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED);
+   });
+   SystemClock.sleep(500);
+   scenario.recreate();
+   SystemClock.sleep(500);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    assertTrue(expected.size()>100); assertEquals(expected,vm.selectedIds());
+    assertEquals(expected.size(),new java.util.HashSet<>(vm.selectedIds()).size());
+    assertEquals(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED,
+      com.google.android.material.bottomsheet.BottomSheetBehavior.from(a.findViewById(R.id.selection_sheet)).getState());
+    androidx.recyclerview.widget.RecyclerView list=a.findViewById(R.id.selected_list);
+    assertEquals(expected.size(),list.getAdapter().getItemCount());
+    list.scrollToPosition(expected.size()-1);
+   });
+   SystemClock.sleep(350);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    androidx.recyclerview.widget.RecyclerView list=a.findViewById(R.id.selected_list);
+    androidx.recyclerview.widget.RecyclerView.ViewHolder holder=list.findViewHolderForAdapterPosition(expected.size()-1);
+    assertNotNull("Last selected row must be reachable by scrolling",holder);
+    int oldTotal=vm.total();
+    int lastPrice=vm.selectedSeats().get(vm.selectedSeats().size()-1).price;
+    holder.itemView.findViewById(R.id.remove_seat).performClick();
+    assertEquals(expected.size()-1,vm.selectedIds().size());
+    assertEquals(oldTotal-lastPrice,vm.total());
+   });
+  }
+ }
+ @Test public void resetKeepsFilterQueryAndSelection() {
+  try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    vm.toggle(vm.seats.get(2));
+    vm.setFilter(com.example.cinemaseatmap.model.SeatFilter.Mode.VIP); vm.setQuery("G");
+    ((SeatMapView)a.findViewById(R.id.seat_map)).focusSeat(vm.seats.get(120));
+    a.findViewById(R.id.reset_view).performClick();
+   });
+   SystemClock.sleep(400);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    assertEquals(1f,((SeatMapView)a.findViewById(R.id.seat_map)).getZoomRatio(),.001f);
+    assertEquals(com.example.cinemaseatmap.model.SeatFilter.Mode.VIP,vm.filter);
+    assertEquals("G",vm.query); assertEquals("A3",vm.selectedIds().get(0)); assertEquals(20,vm.matchingIds().size());
+   });
+  }
+ }
+ @Test public void nearEdgeTapAfterZoomAndPanSelectsCorrectSeat() {
+  try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    SeatMapView map=a.findViewById(R.id.seat_map);
+    com.example.cinemaseatmap.model.Seat seat=vm.seats.get(2);
+    map.focusSeat(seat);
+    long t=SystemClock.uptimeMillis();
+    float x=map.getWidth()/2f,y=map.getHeight()/2f;
+    MotionEvent down=MotionEvent.obtain(t,t,MotionEvent.ACTION_DOWN,x,y,0); map.dispatchTouchEvent(down); down.recycle();
+    MotionEvent move=MotionEvent.obtain(t,t+80,MotionEvent.ACTION_MOVE,x+100,y+70,0); map.dispatchTouchEvent(move); move.recycle();
+    MotionEvent up=MotionEvent.obtain(t,t+100,MotionEvent.ACTION_UP,x+100,y+70,0); map.dispatchTouchEvent(up); up.recycle();
+    assertTrue(vm.selectedIds().isEmpty());
+   });
+   SystemClock.sleep(400);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    SeatMapView map=a.findViewById(R.id.seat_map);
+    com.example.cinemaseatmap.model.Seat seat=vm.seats.get(2);
+    float x=map.screenXForWorld(seat.x+.1f),y=map.screenYForWorld(seat.y+seat.height-.1f);
+    assertTrue(x>=0 && x<map.getWidth() && y>=0 && y<map.getHeight());
+    tap(map,SystemClock.uptimeMillis(),x,y);
+   });
+   SystemClock.sleep(400);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    assertEquals(java.util.Collections.singletonList("A3"),vm.selectedIds());
+   });
+  }
+ }
  private static void tap(SeatMapView map,long t,float x,float y) {
   MotionEvent d=MotionEvent.obtain(t,t,MotionEvent.ACTION_DOWN,x,y,0);
   map.dispatchTouchEvent(d); d.recycle();
