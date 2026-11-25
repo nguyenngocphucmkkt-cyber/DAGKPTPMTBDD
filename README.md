@@ -1,107 +1,171 @@
 # CinemaSeatMap
 
-Đồ án giữa kỳ Phát triển phần mềm cho thiết bị di động.
+Ứng dụng Android Java + XML cho đồ án giữa kỳ **Phát triển phần mềm cho thiết bị di động**. Màn hình chọn ghế rạp phim được tự vẽ trên **một Canvas**, sử dụng dữ liệu giả lập, không cần tài khoản, API hoặc cơ sở dữ liệu.
 
-## Phạm vi đã chốt
+## 1. Phạm vi và dữ liệu
 
-- Android native: Java + XML, Custom View + Canvas.
-- Một phòng chiếu, đúng 200 đối tượng ghế trên một Canvas.
-- Ghế thường: 120 đối tượng (A–F, 20 ghế/hàng).
-- Ghế VIP: 60 đối tượng (G–I, 20 ghế/hàng).
-- Ghế đôi: 20 đối tượng (J–K, 10 cặp/hàng); một cặp là một đối tượng.
-- Trạng thái: trống, đã đặt, bị khóa và đang chọn.
-- Pan, pinch-to-zoom, hit-testing, chú thích, lọc loại ghế và Reset View.
-- Bottom Sheet thu gọn/mở rộng, đồng bộ hai chiều với Canvas.
-- Giữ lựa chọn khi xoay màn hình; dữ liệu giả lập, không cần backend.
+| Khu vực | Bố trí | Đối tượng | Giá giả lập |
+|---|---|---:|---:|
+| Thường | A–F, 20 ghế/hàng | 120 | 80.000đ |
+| VIP | G–I, 20 ghế/hàng | 60 | 120.000đ |
+| Ghế đôi | J–K, 10 cặp/hàng | 20 | 200.000đ/cặp |
+| **Tổng** | **11 hàng, có lối đi giữa** | **200** | |
 
-## Tiến độ
+Một ghế đôi là **một đối tượng chọn**, gồm hai chỗ; tổng phòng có 220 chỗ ngồi. Màn chiếu, nhãn hàng và lối đi là phần vẽ trang trí, không tính vào 200 đối tượng.
 
-- [x] Tạo project Empty Views Activity, Java, min SDK 24.
-- [x] Thiết kế dữ liệu và vẽ sơ đồ 200 ghế.
-- [x] Pan, zoom, hit-testing; kiểm thử pinch bằng MotionEvent hai ngón trên máy ảo.
-- [x] Bộ lọc, chú thích và Reset View.
-- [x] Bottom Sheet và quản lý trạng thái.
-- [ ] Kiểm thử dọc/ngang, hiệu năng và trường hợp biên.
-- [ ] Hoàn thiện tài liệu và video 1–5 phút.
+Mỗi `Seat` có ID, loại, giá, trạng thái gốc và hình chữ nhật trong hệ tọa độ world. `MockSeatRepository` tạo dữ liệu cố định, tái lập được. Ghế khóa/đã đặt được phân bố xác định theo chỉ số, không đổi ngẫu nhiên khi xoay màn hình.
 
-## Chạy dự án
+- Trống: ba sắc độ hồng đậm/vừa/nhạt cho thường/VIP/ghế đôi.
+- Đã đặt: xám tím, không chọn được.
+- Bị khóa: tối, có dấu ×, không chọn được.
+- Đang chọn: hồng sáng có dấu ✓ và viền; lưu riêng trong ViewModel, không sửa trạng thái gốc.
 
-Mở thư mục repository trong Android Studio, đợi Gradle Sync, chọn thiết bị Android API 24 trở lên và Run app.
+## 2. Chạy dự án
 
-## Kiến trúc dự kiến
+1. Clone repository và mở thư mục gốc trong Android Studio.
+2. Cài Android SDK Platform 37 nếu IDE yêu cầu. Dự án dùng compile/target SDK 37, min SDK 24.
+3. Dùng Gradle JVM theo cấu hình dự án (Java toolchain 25); Java source compatibility là 11. Gradle Wrapper 9.6.0 và Android Gradle Plugin 9.4.1 được khai báo trong repository.
+4. Đợi Gradle Sync, chọn cấu hình **app**, chọn máy ảo/điện thoại API 24 trở lên và Run.
 
-Dữ liệu ghế và dữ liệu giả lập tách khỏi ViewModel quản lý trạng thái và SeatMapView đảm nhiệm vẽ/tương tác. MainActivity kết nối giao diện XML với trạng thái chung.
+`local.properties` chứa đường dẫn SDK riêng của máy, được bỏ qua bởi Git. Không sao chép đường dẫn SDK của máy khác.
 
-Công thức tọa độ, hit-testing, quản lý trạng thái và tối ưu hiệu năng sẽ được bổ sung theo phần triển khai thực tế.
+Thư mục trên máy phát triển có dấu tiếng Việt nên `gradle.properties` có `android.overridePathCheck=true` theo thông báo của Android Gradle Plugin. Build bằng IDE đã được xác minh tại đường dẫn này. Khi clone sang máy khác, ưu tiên đường dẫn ngắn, không dấu để giảm vấn đề công cụ Windows.
 
-## Video
+## 3. Sử dụng
 
-Sẽ bổ sung khi hoàn thiện.
+- **Pan:** kéo một ngón, có giới hạn biên; khi toàn sơ đồ đã vừa khung, các trục không cần dịch chuyển được giữ ở giữa.
+- **Pinch-to-zoom:** kéo hai ngón ra để phóng to, chụm lại để thu nhỏ; giới hạn 1×–5× so với góc nhìn fit.
+- **Chạm đúp:** phóng to tại điểm chạm; tại mức tối đa, chạm đúp về toàn cảnh. Đây là công cụ hỗ trợ, không thay thế pinch theo đề.
+- **Chọn/bỏ chọn:** chạm một ghế trống. Chạm ghế đã đặt/bị khóa có thông báo. Thao tác kéo/hai ngón không tạo lựa chọn nhầm.
+- **Lọc:** chọn tất cả/thường/VIP/ghế đôi/còn trống, kết hợp tìm một phần mã ghế. Tìm kiếm không phân biệt hoa/thường, bỏ khoảng trắng đầu/cuối.
+- Ghế ngoài bộ lọc được làm mờ và không nhận tap; lựa chọn đã có vẫn được giữ. Phần trạng thái ghi số kết quả, điều kiện đang áp dụng và số mục chọn ngoài bộ lọc. Không có kết quả sẽ hiện thông báo riêng.
+- **Xóa lọc:** bỏ cả loại lọc và chuỗi tìm kiếm.
+- **Toàn cảnh:** nội suy góc nhìn về mặc định trong 280ms, giữ nguyên bộ lọc và danh sách chọn.
+- **Bottom Sheet:** kéo tay nắm hoặc nhấn Chi tiết/Thu gọn. Phần thu gọn có số mục/tổng giá. Khi mở rộng, danh sách cuộn được và chỉ chiếm khoảng 55% chiều cao khả dụng.
+- **Định vị:** chạm một mục trong Bottom Sheet để bỏ điều kiện lọc, thu gọn bảng và đưa ghế đó vào góc nhìn zoom 3×.
+- **Xóa mục:** nút Xóa trong danh sách bỏ chọn đúng ghế và cập nhật Canvas/tổng tiền ngay.
 
-## Nhật ký sử dụng AI
+## 4. Kiến trúc
 
-| Ngày | Agent | Nhiệm vụ / phần thay đổi | Kiểm tra và hạn chế |
-|---|---|---|---|
-| 25/11/2026 | Codex | Phân tích đề, đề xuất quy trình và phạm vi 200 đối tượng; tạo project Java + XML bằng Android Studio | Đối chiếu yêu cầu và barem; hiện là khung project, chưa có chức năng chọn ghế. Sinh viên cần xem và hiểu mã trước khi nộp. |
+| Thành phần | Trách nhiệm |
+|---|---|
+| `model/Seat` | Dữ liệu ghế bất biến, độc lập lớp vẽ |
+| `model/SeatFilter` | Quy tắc lọc/tìm kiếm chung |
+| `data/MockSeatRepository` | Sinh 200 đối tượng và bố cục world |
+| `ui/SeatSelectionViewModel` | Nguồn lựa chọn, bộ lọc/query, tổng giá, trạng thái sheet |
+| `ui/MapTransform` | Fit, zoom, pan, giới hạn và đổi tọa độ; Java thuần |
+| `ui/SeatMapView` | Một Canvas vẽ sơ đồ, xử lý cử chỉ/hit-testing |
+| `ui/SelectedSeatAdapter` | RecyclerView tái sử dụng hàng trong Bottom Sheet |
+| `MainActivity` | Kết nối XML, ViewModel, Canvas và BottomSheetBehavior |
 
-## Xác minh project nền
+`layout/activity_main.xml` và `layout-land/activity_main.xml` dùng các phần XML chung cho bộ lọc, chú thích, điều khiển và Bottom Sheet. Ở chế độ ngang, thông tin/bộ lọc ở cột trái có thể cuộn.
 
-- Đã Gradle Sync thành công trong Android Studio.
-- Đã build debug thành công và cài/chạy trên Medium Phone API 36; màn hình mặc định hiển thị Hello World.
-- Thư mục dự án có dấu tiếng Việt; áp dụng android.overridePathCheck=true theo hướng dẫn lỗi của Android Gradle Plugin. Cần tiếp tục kiểm tra build trong các mốc phát triển sau.
-- Nhật ký AI bổ sung: Codex xử lý các hộp thoại thêm file Git, xác định lỗi đường dẫn non-ASCII, bổ sung cấu hình Gradle và kiểm chứng build/chạy bằng giao diện Android Studio. Sau đó đã triển khai sơ đồ tĩnh như ghi nhận bên dưới.
+Toàn bộ ghế, màn chiếu, nhãn phân khu, hàng và lối đi được vẽ trong `SeatMapView.onDraw()`. Không tạo 200 Button/View thay cho ghế. Các View trong RecyclerView chỉ là mục của danh sách lựa chọn.
 
+## 5. Chuyển đổi tọa độ và hit-testing
 
-## Mốc sơ đồ tĩnh 200 đối tượng
+Gọi `(wx, wy)` là tọa độ world, `(sx, sy)` là tọa độ cục bộ trong `SeatMapView`, `s` là tỷ lệ, `(tx, ty)` là dịch chuyển:
 
-- `model/Seat.java`: dữ liệu bất biến, loại ghế, trạng thái, giá và hình học tọa độ world.
-- `data/MockSeatRepository.java`: tạo danh sách cố định 200 đối tượng; 120 thường, 60 VIP, 20 ghế đôi. Một ghế đôi tương ứng hai chỗ, tổng cộng 220 chỗ ngồi.
-- `ui/SeatMapView.java`: một Canvas vẽ toàn bộ ghế, màn hình chiếu, nhãn phân khu và hàng; tái sử dụng Paint và RectF; tự fit sơ đồ khi kích thước View thay đổi.
-- `layout/activity_main.xml` và `layout-land/activity_main.xml`: khung XML cho dọc/ngang, chú thích ba trạng thái và ký hiệu loại ghế.
-- Xác minh dữ liệu bằng Java: đúng 200 ID không trùng, phân bổ 120/60/20, đủ ba trạng thái, không chồng lấn và không vượt biên world.
-- Build debug thành công trong Android Studio, đã chạy trên Medium Phone API 36 và xoay dọc/ngang để kiểm tra bố cục.
-- Nhật ký AI: Codex sinh/chỉnh sửa các file nêu trên, kiểm tra dữ liệu và build/chạy; phát hiện sơ đồ quá nhỏ ở chế độ ngang, bổ sung layout ngang với cột thông tin bên trái. Sinh viên cần tự xem và giải thích mã nguồn. Chưa có Pan/Zoom, chọn ghế, bộ lọc hoặc Bottom Sheet.
+```text
+sx = wx * s + tx                 wx = (sx - tx) / s
+sy = wy * s + ty                 wy = (sy - ty) / s
+```
 
-## Mốc thiết kế giao diện
+Trước khi zoom, lấy world-point dưới tâm hai ngón. Sau khi giới hạn tỷ lệ mới, tính dịch chuyển để world-point đó vẫn ở dưới tâm cử chỉ:
 
-- Nền chuyển sắc tối, tiêu đề và thông tin phòng chiếu, bảng giá theo loại ghế.
-- Canvas vẽ màn chiếu cong và ánh sáng nhẹ, ghế có lưng tựa/đệm/tay vịn; thường xanh ngọc, VIP vàng, ghế đôi tím. Ghế đã đặt xám, ghế khóa có dấu chéo.
-- Paint, RectF, Path, Shader và Typeface được tạo/tái sử dụng ngoài onDraw; hình học 200 đối tượng được giữ nguyên.
-- Thanh trạng thái dùng biểu tượng sáng trên nền tối; layout ngang có cột thông tin cuộn.
-- Nhật ký AI: Codex chỉnh SeatMapView, MainActivity, XML dọc/ngang, strings và drawable; kiểm tra build/cài/chạy thành công trên Medium Phone API 36, review màn hình dọc/ngang và sửa xuống dòng bảng giá/độ tương phản thanh trạng thái. Pan/Zoom và chọn ghế vẫn là mốc tiếp theo.
+```text
+wx = (focusX - tx) / oldScale
+wy = (focusY - ty) / oldScale
+newTx = focusX - wx * newScale
+newTy = focusY - wy * newScale
+```
 
-### Điều chỉnh theo ảnh mẫu tím hồng
+Sau đó kẹp pan trong vùng cho phép; tại biên, giới hạn di chuyển được ưu tiên. Trục có nội dung nhỏ hơn vùng nhìn được căn giữa.
 
-Codex áp dụng bảng màu tím mận/rose thống nhất cho nền, ghế, chữ, bảng giá và ánh sáng màn chiếu. Ghế trống cùng tông hồng, đã đặt tím trầm, khóa có dấu chéo; VIP dùng viền sáng và nhãn phân khu, ghế đôi dùng hình cặp. Hiệu ứng hạt sáng có tọa độ tạo cố định ngoài onDraw. Đã build/cài/chạy thành công và xem cả dọc/ngang trên Medium Phone API 36. Dữ liệu và hình học 200 đối tượng không đổi.
+Tap được đổi về world trước khi kiểm tra `x <= wx <= x + width` và `y <= wy <= y + height` cho từng ghế phù hợp bộ lọc. Ghế không chồng lấn nên kết quả xác định; 200 đối tượng cho phép duyệt tuyến tính đơn giản. Hình học sử dụng chung với dữ liệu vẽ nên hit-testing vẫn đúng sau pan/zoom và gần biên hình chữ nhật ghế.
 
+`GestureDetector` tách single tap đã xác nhận khỏi double tap. `ScaleGestureDetector` nhận hai ngón; chuyển pointer, drag vượt touch slop và ACTION_CANCEL được xử lý để không chọn nhầm.
 
-## Mốc tương tác và sắc độ ghế
+## 6. Quản lý trạng thái
 
-- Ghế thường hồng đậm, VIP hồng vừa, ghế đôi hồng nhạt. Đã đặt xám tím, khóa tối có dấu chéo, đang chọn hồng sáng có dấu tick và viền.
-- `MapTransform`: screen = world * scale + translation; world = (screen - translation) / scale. Zoom giữ world-point dưới tâm cử chỉ; tỷ lệ giới hạn từ fit đến 5 lần fit. Pan kẹp biên theo kích thước nội dung và viewport.
-- `SeatMapView`: ScaleGestureDetector xử lý pinch; kéo vượt touch slop mới pan; cử chỉ nhiều ngón/drag/cancel không tạo tap chọn nhầm. Tap đổi sang world rồi kiểm tra bounds từng ghế, gồm cả biên. Nút +/− là công cụ hỗ trợ zoom, không thay thế pinch.
-- `SeatSelectionViewModel`: nguồn lựa chọn thống nhất, chỉ cho chọn ghế trống; tổng giá cập nhật ngay. ViewModel giữ lựa chọn khi xoay, Bundle lưu ID để phục hồi Activity. Ghế đôi có một ID và giá cho cả cặp.
-- Reset View nội suy vị trí/tỷ lệ trong 280ms, giữ danh sách ghế đã chọn. Thay đổi kích thước đưa góc nhìn về fit, giữ lựa chọn.
-- `MapTransformTest`: kiểm tra tâm zoom, min/max, biên pan, phép đổi tọa độ tại điểm gần biên của 200 ghế và reset. Đã chạy cùng hai phương thức kiểm thử bằng Java độc lập (assertions), chưa chạy qua Gradle JUnit runner.
-- Kiểm tra UI trên Medium Phone API 36: chọn A2, zoom bằng nút +, kéo, bỏ chọn A2 đúng sau biến đổi, chọn A3, Reset View giữ A3/80.000đ, xoay ngang rồi dọc vẫn giữ A3. Build và cài/chạy thành công. Cử chỉ pinch hai ngón đã triển khai, chưa kiểm chứng trực tiếp bằng cảm ứng nhiều ngón trong phiên này.
-- Nhật ký AI: Codex sinh MapTransform, SeatSelectionViewModel, MapTransformTest; chỉnh SeatMapView/MainActivity/layout/strings. Phát hiện phần tóm tắt đổi chiều cao khiến Canvas nhảy góc nhìn; dành sẵn ba dòng để ổn định vùng vẽ. Sinh viên cần review/hiểu mã và kiểm tra pinch trên thiết bị thật trước khi nộp.
-- Mốc tiếp theo: lọc loại ghế và Bottom Sheet đồng bộ hai chiều. Tóm tắt hiện tại chưa phải Expandable Bottom Sheet.
+- `SeatSelectionViewModel` là nguồn thống nhất cho Canvas, bộ lọc và danh sách.
+- Lựa chọn dùng `LinkedHashSet` ID để không trùng và giữ thứ tự người dùng chọn. Một bảng tra ID → Seat hỗ trợ truy xuất danh sách/giá.
+- Xoay màn hình giữ ViewModel. ID chọn, loại lọc, query và trạng thái sheet còn được lưu trong Bundle để phục hồi Activity.
+- Khôi phục chỉ nhận ID hợp lệ của ghế trống, bỏ ID không tồn tại/không hợp lệ và giữ thứ tự danh sách đã lưu.
+- Thay đổi kích thước đặt góc nhìn về fit nhưng giữ dữ liệu chọn/lọc. Reset View chỉ tác động `MapTransform`.
+- Lọc không xóa ghế đã chọn. Mục ngoài bộ lọc được ghi nhãn trong sheet; định vị mục chủ động bỏ lọc để người dùng nhìn thấy ghế đó.
 
+## 7. Hiệu năng
 
-## Mốc bộ lọc, Bottom Sheet và cách thu phóng
+- Paint, RectF, Path, Shader và Typeface được tạo/tái sử dụng ngoài `onDraw()`.
+- Hình học ghế và tọa độ hạt sáng được tạo một lần; không sinh ngẫu nhiên khi vẽ.
+- Chỉ yêu cầu `invalidate()` khi dữ liệu, lựa chọn, lọc hoặc góc nhìn thay đổi; animation Reset View dừng khi có thao tác mới hoặc View tách khỏi cửa sổ.
+- Pan/zoom chỉ đổi phép biến đổi, không xây lại dữ liệu ghế hay danh sách.
+- RecyclerView tái sử dụng hàng cho danh sách dài. Lấy danh sách chọn/tổng tiền theo ID thay vì duyệt lồng toàn bộ sơ đồ.
 
-- Chạm đúp phóng to tại vị trí chạm, đến mức tối đa thì chạm đúp đưa về toàn cảnh. Nút +/− hỗ trợ, pinch hai ngón vẫn là thao tác chính theo đề. Tách single tap được xác nhận khỏi double tap để không chọn nhầm ghế.
-- Lọc theo tất cả/thường/VIP/ghế đôi/còn trống, kết hợp tìm mã ghế không phân biệt hoa thường. Hiển thị số kết quả, điều kiện hiện tại, số mục chọn ngoài bộ lọc; nút Xóa lọc đưa về đầy đủ. Kết quả rỗng có thông báo riêng.
-- Bộ lọc chỉ làm mờ các ghế không phù hợp và chặn tap vào chúng; giữ toàn bộ lựa chọn trong ViewModel/Bottom Sheet. Reset View không thay đổi bộ lọc hay lựa chọn.
-- BottomSheetBehavior có thu gọn/mở rộng, có thể kéo hoặc nhấn Chi tiết/Thu gọn. Phần mở rộng chiếm khoảng 55% chiều cao khả dụng, danh sách RecyclerView cuộn được.
-- Header luôn hiển thị số mục và tổng giá. Mỗi mục có nút xóa; chạm mục sẽ xóa điều kiện lọc, thu gọn bảng và định vị ghế ở mức zoom 3×. Mục ngoài bộ lọc có nhãn giải thích.
-- Lựa chọn, loại lọc, query và trạng thái sheet được lưu khi tái tạo Activity; Canvas/bộ lọc/danh sách cùng dùng SeatSelectionViewModel và SeatFilter.
+Đã xem thao tác trên máy ảo; chưa có số đo FPS hoặc kiểm chứng hiệu năng trên điện thoại thật. Không coi kiểm thử chức năng là bằng chứng benchmark.
 
-### Kiểm chứng mốc này
+## 8. Kiểm thử và bằng chứng
 
-- Build thành công, cài/chạy trên Medium Phone API 36.
-- Java check: đủ kết quả 200/120/60/20 theo loại, còn trống chỉ trả ghế available, tìm kiếm trim/case-insensitive và không có kết quả.
-- Android instrumentation `SeatGestureTest`: **OK (4 tests)**. Gồm pinch hai con trỏ, double tap không chọn nhầm, giữ A3/VIP/query G sau ActivityScenario.recreate, thao tác row định vị/xóa đồng bộ với Canvas/giá.
-- Android Studio chạy connected test trả 0 tests trong phiên này; để tránh coi đó là pass giả, đã cài hai APK build và chạy trực tiếp AndroidJUnitRunner qua adb; kết quả 4 tests được runner xác nhận.
-- Review UI: chọn A3 rồi lọc VIP vẫn giữ A3 và báo ngoài bộ lọc; chạm row bỏ lọc và focus đúng A3; xóa row đưa tổng về 0; tìm Z999 hiện thông báo trống. Kiểm tra trước đây về chưa thử pinch được thay thế bằng instrumentation ở mốc này.
-- Nhật ký AI: Codex thêm SeatFilter, SelectedSeatAdapter, các layout tái sử dụng, Bottom Sheet và wiring MainActivity; chỉnh GestureDetector/Canvas và kiểm thử. Sửa peek height để header không bị cắt, sửa nút Xóa bị xuống dòng. Sinh viên vẫn cần review và hiểu mã nguồn trước khi nộp.
+Môi trường đã xác minh: **Medium Phone API 36**, build debug/cài/chạy thành công trong Android Studio, review giao diện dọc/ngang.
+
+`SeatGestureTest` chạy trực tiếp bằng AndroidJUnitRunner trên máy ảo, kết quả **OK (7 tests)**:
+
+1. Pinch bằng hai con trỏ MotionEvent phóng to và không chọn ghế.
+2. Double tap phóng to và không chọn nhầm.
+3. Giữ lựa chọn, bộ lọc và query sau ActivityScenario.recreate.
+4. Chạm mục Bottom Sheet định vị/bỏ lọc; xóa mục đồng bộ lựa chọn và tổng tiền.
+5. Danh sách hơn 100 ghế giữ đúng thứ tự/không trùng sau recreate, giữ sheet mở, cuộn tới cuối và xóa được mục cuối.
+6. Reset View giữ bộ lọc/query/lựa chọn, chỉ đưa zoom về fit.
+7. Chạm sát biên ghế sau zoom và pan chọn đúng A3; drag không chọn nhầm.
+
+`MapTransformTest` kiểm tra tâm zoom, min/max, giới hạn pan, đổi tọa độ gần biên của 200 ghế và reset. Hai phương thức đã được chạy bằng Java assertions độc lập; chưa ghi nhận chạy qua Gradle JUnit runner.
+
+Các kiểm tra Java dữ liệu/lọc đã đạt: đúng 200 ID không trùng, 120/60/20 theo loại, không chồng lấn/vượt biên, bộ lọc còn trống, tìm kiếm trim/case-insensitive và kết quả rỗng. Review UI đã xác nhận chọn A3 → lọc VIP vẫn giữ A3 → định vị bỏ lọc/focus đúng → xóa trả tổng về 0; tìm Z999 có thông báo trống.
+
+Có thể chạy lớp `SeatGestureTest` trong Android Studio. Trong phiên phát triển, Gradle connected test báo 0 tests dù build thành công; vì vậy kết quả 7 tests nêu trên được xác minh bằng AndroidJUnitRunner trực tiếp sau khi cài app và test APK, không dựa vào dòng BUILD SUCCESSFUL của lượt 0 tests.
+
+```text
+adb install -r -t <app-debug.apk>
+adb install -r -t <app-debug-androidTest.apk>
+adb shell am instrument -w -r -e class com.example.cinemaseatmap.SeatGestureTest com.example.cinemaseatmap.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+## 9. Nhật ký sử dụng AI Agent
+
+AI Agent: **Codex**. Sinh viên chịu trách nhiệm đọc, kiểm tra, điều chỉnh và giải thích mã nguồn đã sử dụng.
+
+| Ngày | Nhiệm vụ giao Agent / phần sinh hoặc sửa | Lỗi hoặc hạn chế và cách kiểm tra/điều chỉnh |
+|---|---|---|
+| 25/11/2026 | Phân tích đề và barem, lập quy trình, chốt rạp phim 200 đối tượng | Đề chức năng ghi 50–250, barem ghi 150–250; chọn 200 để đáp ứng cả hai |
+| 25/11/2026 | Tạo project Java + XML trong repo bằng Android Studio | Sửa lỗi đường dẫn non-ASCII theo hướng dẫn AGP; xác minh Sync/build/chạy |
+| 25/11/2026 | Sinh Seat, MockSeatRepository, SeatMapView và XML dọc/ngang | Java check số lượng/ID/hình học; bổ sung bố cục ngang vì bản đầu sơ đồ quá nhỏ |
+| 25/11/2026 | Chỉnh ghế, nền, ánh sáng, bảng màu theo góp ý/ảnh mẫu | Đổi ba màu sang tông tím–hồng; sau đó phân biệt loại ghế bằng sắc độ; review trên máy ảo |
+| 25/11/2026 | Sinh MapTransform, xử lý pan/pinch/tap/reset, ViewModel và tóm tắt | Kiểm tra tọa độ; sửa tóm tắt thay đổi chiều cao làm Canvas nhảy góc nhìn; thử chọn sau zoom/pan |
+| 25/11/2026 | Thêm double tap hỗ trợ, SeatFilter, Bottom Sheet, adapter và MainActivity wiring | Sửa header sheet bị cắt và nút Xóa xuống dòng; lọc giữ lựa chọn, định vị/xóa được review UI |
+| 25/11/2026 | Viết kiểm thử cử chỉ, trạng thái và danh sách dài | Lượt Gradle 0 tests không được coi là pass; chạy trực tiếp AndroidJUnitRunner, 7 tests đạt |
+| 25/11/2026 | Hoàn thiện phục hồi thứ tự chọn và tối ưu tra cứu ID | Bản đầu restore theo thứ tự sơ đồ; sửa giữ thứ tự đã lưu, xác minh danh sách đảo thứ tự hơn 100 ghế sau recreate |
+| 25/11/2026 | Cập nhật README theo mã hiện tại | Chưa có video/kiểm tra thiết bị thật; ghi rõ các phần còn lại, không coi đồ án đã nộp xong |
+
+## 10. Video và hoàn tất nộp bài
+
+**Đường dẫn video: chưa bổ sung.** Chưa ghi hình bản nộp.
+
+Kịch bản video gợi ý, khoảng 2–3 phút:
+
+1. Giới thiệu sơ đồ 200 đối tượng, phân khu, ba loại và các trạng thái.
+2. Pan và pinch hai ngón ra/vào, chạm chọn/bỏ chọn sau khi đổi góc nhìn.
+3. Lọc VIP/ghế đôi, tìm một mã, tìm Z999 để thấy trạng thái trống, Xóa lọc.
+4. Mở Bottom Sheet, chọn nhiều ghế, cuộn danh sách, xóa mục và định vị một ghế.
+5. Reset View vẫn giữ bộ lọc/lựa chọn; xoay ngang rồi dọc chứng minh giữ trạng thái.
+
+Checklist còn lại trước khi nộp:
+
+- [x] Có đủ chức năng bắt buộc trong mã nguồn và chạy được trên máy ảo.
+- [x] Có kiểm thử cử chỉ/trạng thái/danh sách dài và review dọc/ngang.
+- [x] README có dữ liệu, kiến trúc, tọa độ, hit-testing, trạng thái, hiệu năng và nhật ký AI.
+- [ ] Thử cảm giác pinch/pan trên điện thoại thật; kiểm tra thêm thiết bị/API nếu có.
+- [ ] Clone sạch sang thư mục khác và xác minh build theo hướng dẫn.
+- [ ] Quay video 1–5 phút, đưa đường dẫn truy cập được vào README.
+- [ ] Hoàn thiện lịch sử 5–7 commit có ý nghĩa theo các mốc thực tế; không tạo commit giả để đủ số.
+- [ ] Push bản cuối và kiểm tra quyền truy cập repository/video theo quy định nộp bài.
