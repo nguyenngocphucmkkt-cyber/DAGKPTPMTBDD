@@ -42,10 +42,25 @@ public final class SeatMapView extends View {
     public void setMatchingIds(List<String> ids) { matching=new java.util.HashSet<>(ids); invalidate(); }
     public void focusSeat(Seat s) {
         stopAnimation();
-        transform.scale=transform.fitScale*3;
-        transform.x=getWidth()/2f-(s.x+s.width/2)*transform.scale;
-        transform.y=getHeight()/2f-(s.y+s.height/2)*transform.scale;
-        transform.clamp(); invalidate();
+        final float startScale=transform.scale,startX=transform.x,startY=transform.y;
+        MapTransform target=new MapTransform();
+        target.resize(getWidth(),getHeight(),MockSeatRepository.WORLD_WIDTH,
+                MockSeatRepository.WORLD_HEIGHT,8*getResources().getDisplayMetrics().density);
+        target.scale=transform.fitScale*3;
+        target.x=getWidth()/2f-(s.x+s.width/2)*target.scale;
+        target.y=getHeight()/2f-(s.y+s.height/2)*target.scale;
+        target.clamp();
+        resetAnimator=ValueAnimator.ofFloat(0,1);
+        resetAnimator.setDuration(650);
+        resetAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        resetAnimator.addUpdateListener(animation -> {
+            float t=(float)animation.getAnimatedValue();
+            transform.scale=startScale+(target.scale-startScale)*t;
+            transform.x=startX+(target.x-startX)*t;
+            transform.y=startY+(target.y-startY)*t;
+            transform.clamp(); invalidate();
+        });
+        resetAnimator.start();
     }
     public float getZoomRatio() { return transform.scale/transform.fitScale; }
     public float screenXForWorld(float x) { return x*transform.scale+transform.x; }

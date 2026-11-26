@@ -78,8 +78,16 @@ public class SeatGestureTest {
     assertNotNull(holder);
     holder.itemView.performClick();
     assertEquals(com.example.cinemaseatmap.model.SeatFilter.Mode.ALL,vm.filter);
-    assertEquals(3f,((SeatMapView)a.findViewById(R.id.seat_map)).getZoomRatio(),.01f);
+    assertTrue(((SeatMapView)a.findViewById(R.id.seat_map)).getZoomRatio()<3f);
     assertEquals(1,vm.selectedIds().size());
+   });
+   SystemClock.sleep(850);
+   scenario.onActivity(a->{
+    SeatSelectionViewModel vm=new ViewModelProvider(a).get(SeatSelectionViewModel.class);
+    assertEquals(3f,((SeatMapView)a.findViewById(R.id.seat_map)).getZoomRatio(),.01f);
+    androidx.recyclerview.widget.RecyclerView list=a.findViewById(R.id.selected_list);
+    androidx.recyclerview.widget.RecyclerView.ViewHolder holder=list.findViewHolderForAdapterPosition(0);
+    assertNotNull(holder);
     holder.itemView.findViewById(R.id.remove_seat).performClick();
     assertTrue(vm.selectedIds().isEmpty()); assertEquals(0,vm.total());
    });

@@ -42,7 +42,7 @@ Thư mục trên máy phát triển có dấu tiếng Việt nên `gradle.proper
 - **Xóa lọc:** bỏ cả loại lọc và chuỗi tìm kiếm.
 - **Toàn cảnh:** nội suy góc nhìn về mặc định trong 280ms, giữ nguyên bộ lọc và danh sách chọn.
 - **Bottom Sheet:** kéo tay nắm hoặc nhấn Chi tiết/Thu gọn. Phần thu gọn có số mục/tổng giá. Khi mở rộng, danh sách cuộn được và chỉ chiếm khoảng 55% chiều cao khả dụng.
-- **Định vị:** chạm một mục trong Bottom Sheet để bỏ điều kiện lọc, thu gọn bảng và đưa ghế đó vào góc nhìn zoom 3×.
+- **Định vị:** chạm một mục trong Bottom Sheet để bỏ điều kiện lọc, thu gọn bảng và đưa ghế đó vào góc nhìn zoom 3× bằng chuyển động 650ms; thao tác chạm mới có thể ngắt chuyển động.
 - **Xóa mục:** nút Xóa trong danh sách bỏ chọn đúng ghế và cập nhật Canvas/tổng tiền ngay.
 
 ## 4. Kiến trúc
@@ -133,7 +133,7 @@ adb shell am instrument -w -r -e class com.example.cinemaseatmap.SeatGestureTest
 
 ## 9. Nhật ký sử dụng AI Agent
 
-AI Agent: **Codex**. Sinh viên chịu trách nhiệm đọc, kiểm tra, điều chỉnh và giải thích mã nguồn đã sử dụng.
+AI Agent: **Codex**. AI được sử dụng để đề xuất hướng giải quyết, giải thích kỹ thuật, hỗ trợ viết/sửa mã và kiểm thử. Sinh viên chịu trách nhiệm tìm hiểu, kiểm tra, điều chỉnh và giải thích phần mã đưa vào bài nộp. Nhật ký phân biệt hỗ trợ đã thực hiện với phần sinh viên cần tự rà soát trước khi nộp.
 
 | Ngày | Nhiệm vụ giao Agent / phần sinh hoặc sửa | Lỗi hoặc hạn chế và cách kiểm tra/điều chỉnh |
 |---|---|---|
@@ -146,6 +146,30 @@ AI Agent: **Codex**. Sinh viên chịu trách nhiệm đọc, kiểm tra, điề
 | 25/11/2026 | Viết kiểm thử cử chỉ, trạng thái và danh sách dài | Lượt Gradle 0 tests không được coi là pass; chạy trực tiếp AndroidJUnitRunner, 7 tests đạt |
 | 25/11/2026 | Hoàn thiện phục hồi thứ tự chọn và tối ưu tra cứu ID | Bản đầu restore theo thứ tự sơ đồ; sửa giữ thứ tự đã lưu, xác minh danh sách đảo thứ tự hơn 100 ghế sau recreate |
 | 25/11/2026 | Cập nhật README theo mã hiện tại | Chưa có video/kiểm tra thiết bị thật; ghi rõ các phần còn lại, không coi đồ án đã nộp xong |
+| 26/11/2026 | Theo góp ý video demo, AI sửa SeatMapView.focusSeat từ đổi góc nhìn tức thì sang nội suy 650ms; điều chỉnh kiểm thử đồng bộ Bottom Sheet | Build/cài lại bằng Android Studio; chạy lại AndroidJUnitRunner đạt 7 tests. Video quay thao tác thật, nhập từng ký tự và kiểm tra cả kết quả tìm kiếm có/không có; mức độ mượt cần sinh viên review |
+
+### Cách tiếp nhận đề xuất và áp dụng
+
+Quy trình học và áp dụng: yêu cầu AI đề xuất → đọc giải thích và đối chiếu yêu cầu → tìm hiểu mã liên quan → thử trên ứng dụng → điều chỉnh theo kết quả → đưa vào bản nộp khi đã hiểu.
+
+Các yêu cầu đề xuất, nhận xét thiết kế và kiểm chứng trong bảng trên phản ánh quá trình hỗ trợ đã diễn ra. Bảng vẫn ghi rõ phần AI viết hoặc sửa; không coi toàn bộ mã là do sinh viên tự viết. Việc sinh viên đã tự hiểu từng phần cần được chính sinh viên xác nhận, không suy ra từ kết quả kiểm thử tự động.
+
+### Nội dung sinh viên tự tìm hiểu và xác nhận trước khi nộp
+
+Chỉ đánh dấu sau khi tự đọc, chạy thử và giải thích được nội dung tương ứng. Có thể bổ sung ngày thực hiện, tài liệu đã đọc và điều chỉnh thực tế.
+
+- [ ] Giải thích dữ liệu 200 đối tượng, phân biệt ghế đôi và số chỗ ngồi.
+- [ ] Giải thích vì sao toàn bộ sơ đồ dùng một Canvas và dữ liệu tách khỏi lớp vẽ.
+- [ ] Tự tính ví dụ chuyển đổi world ↔ screen; giải thích zoom quanh tâm hai ngón và giới hạn pan.
+- [ ] Giải thích hit-testing sau pan/zoom và cách tách tap khỏi drag/pinch.
+- [ ] Theo dõi luồng chọn ghế → ViewModel → Canvas/Bottom Sheet; xóa và định vị một mục.
+- [ ] Giải thích giữ lựa chọn khi lọc, Reset View và xoay màn hình.
+- [ ] Tự chạy các tình huống lỗi/biên, đọc kết quả kiểm thử và nhận biết giới hạn bằng chứng.
+- [ ] Ghi lại phần tự điều chỉnh sau khi tìm hiểu (nếu có), không ghi các bước chưa thực hiện.
+
+### Bổ sung ở mốc kiểm chứng cuối
+
+AI hỗ trợ đối chiếu đề PDF, chuẩn bị nguồn sạch, kiểm tra Sync/build, cập nhật tài liệu và push qua Android Studio sau khi sinh viên tự đăng nhập. Bản nguồn sạch build thành công; repo Public và clone HTTPS không đăng nhập thành công. Video chưa được quay. Các thao tác này không chứng minh thay cho mức độ hiểu mã của sinh viên.
 
 ## 10. Video và hoàn tất nộp bài
 
@@ -167,7 +191,7 @@ Checklist còn lại trước khi nộp:
 - [ ] Thử cảm giác pinch/pan trên điện thoại thật; kiểm tra thêm thiết bị/API nếu có.
 - [x] Clone GitHub công khai sang thư mục khác; đối chiếu mã với bản nguồn sạch đã build thành công trong Android Studio.
 - [ ] Quay video 1–5 phút, đưa đường dẫn truy cập được vào README.
-- [x] Có 6 commit thực tế sau mốc xác nhận build sạch và GitHub; tiếp tục commit có nội dung thực nếu còn thay đổi. Không sửa thời gian hoặc tạo commit rỗng để đủ số.
+- [ ] Rà yêu cầu lịch sử Git: đã có đủ số lượng commit, nhưng các commit hiện tập trung ngày 25/11/2026. Đề còn yêu cầu phân bổ trong thời gian thực hiện; không khẳng định đạt hoàn toàn chỉ dựa vào số lượng. Không sửa thời gian hoặc tạo commit rỗng.
 - [x] Push mã nguồn và tài liệu lên main; repository Public, truy cập không đăng nhập và clone HTTPS thành công.
 - [ ] Bổ sung video và kiểm tra quyền truy cập video khi sinh viên quay xong.
 
@@ -193,8 +217,8 @@ Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm ch
 | Tách dữ liệu/trạng thái/lớp vẽ | Seat/Repository, ViewModel, MapTransform và SeatMapView riêng |
 | Tái sử dụng tài nguyên đồ họa | Paint/Path/RectF/Shader/Typeface tạo ngoài onDraw; không dựng 200 View trên sơ đồ |
 | Build/chạy được | Đã build/cài/chạy qua Android Studio, 7 instrumentation tests đạt trên API 36 |
-| README và nhật ký AI | Có các mục 1–9; đường dẫn video còn để lại theo yêu cầu sinh viên |
-| 5–7 commit có ý nghĩa | Có 6 sau commit xác minh cuối; commit mới dùng tiếng Việt, giữ thời gian thực; không tạo commit rỗng |
+| README và nhật ký AI | README có nhật ký AI tại mục 9; đường dẫn video chưa bổ sung |
+| 5–7 commit có ý nghĩa, phân bổ trong thời gian thực hiện | Đủ số lượng; các commit hiện tập trung cùng ngày. Chưa thể xác nhận tiêu chí phân bổ thời gian; không sửa ngày hoặc tạo commit rỗng |
 | Repository và mã nguồn có thể truy cập để nộp | Đã push main, chuyển Public theo yêu cầu sinh viên; API không đăng nhập và clone HTTPS xác minh truy cập công khai |
 
 ### Kiểm tra bản xuất sạch và giới hạn bằng chứng
@@ -222,4 +246,18 @@ Nhật ký AI bổ sung: Codex rà lại toàn văn đề PDF, đối chiếu m�
 - Đối chiếu 61 file được Git theo dõi với commit: nội dung khớp sau chuẩn hóa LF/CRLF. Bản clone HTTPS từ GitHub cũng ở đúng commit `9269338`. Commit xác nhận tiếp theo chỉ cập nhật README, không thay đổi mã ứng dụng đã kiểm chứng.
 - Không coi lượt Gradle CLI bị giới hạn quyền là pass; bằng chứng build sạch là lượt Android Studio nêu trên. Bộ 7 instrumentation tests đạt ở mốc trước vẫn là bằng chứng kiểm thử chức năng hiện tại.
 - Nhật ký AI bổ sung: Codex chuẩn bị nguồn sạch, dùng Android Studio để Sync/build, push qua IDE sau khi sinh viên tự đăng nhập; công khai repo theo lựa chọn rõ ràng của sinh viên và kiểm tra bằng API/clone không xác thực. Sinh viên tự xác nhận Trust Project; không thay đổi ngoại lệ Defender để build.
-- Ngoài việc sinh viên quay/chèn đường dẫn video, các mục mã nguồn, build, tài liệu, số lượng commit và truy cập repo đã có bằng chứng xác minh. Thử trên điện thoại thật vẫn là khuyến nghị bổ sung.
+- Ngoài việc sinh viên quay/chèn đường dẫn video, các mục mã nguồn, build, tài liệu, số lượng commit và truy cập repo đã có bằng chứng xác minh; phân bổ commit theo thời gian vẫn cần đối chiếu quy định giảng viên. Thử trên điện thoại thật vẫn là khuyến nghị bổ sung.
+
+## 13. Hồ sơ nộp theo đề
+
+| Thành phần | Nơi cung cấp | Trạng thái |
+|---|---|---|
+| GitHub Repository và mã nguồn biên dịch/chạy được | https://github.com/nguyenngocphucmkkt-cyber/DAGKPTPMTBDD | Public; đã kiểm chứng build nguồn sạch |
+| Lịch sử Git có ý nghĩa, phân bổ trong thời gian thực hiện | Lịch sử commit của repository | Đủ số lượng; cần lưu ý các commit tập trung cùng ngày |
+| README đủ nội dung mục 5.4 | README.md | Có nội dung kỹ thuật; thiếu đường dẫn video |
+| Nhật ký AI theo mục 5.5 | Mục 9 của README.md | Có nhiệm vụ/phần mã/hạn chế/kiểm chứng; sinh viên tự xác nhận nội dung đã tìm hiểu |
+| Video 01–05 phút | Chèn link tại mục 10 | Chưa thực hiện |
+
+Video cần thể hiện Pan, pinch hai ngón, chọn/bỏ chọn, lọc hoặc tìm kiếm, Bottom Sheet, đồng bộ trạng thái, Reset View và giữ trạng thái khi xoay màn hình. Kiểm tra quyền truy cập cả repo và video trước khi gửi.
+
+Chỉ nộp mã nguồn và tài liệu cần thiết; không đưa local.properties, .idea, .gradle, thư mục build hoặc các tệp sinh tự động vào Git. Đề không nêu APK là thành phần bắt buộc. Đề PDF không quy định cổng nộp hoặc mẫu tên bài; thực hiện theo thông báo nộp của giảng viên khi có.
