@@ -169,13 +169,13 @@ Chỉ đánh dấu sau khi tự đọc, chạy thử và giải thích được 
 
 ### Bổ sung ở mốc kiểm chứng cuối
 
-AI hỗ trợ đối chiếu đề PDF, chuẩn bị nguồn sạch, kiểm tra Sync/build, cập nhật tài liệu và push qua Android Studio sau khi sinh viên tự đăng nhập. Bản nguồn sạch build thành công; repo Public và clone HTTPS không đăng nhập thành công. Video chưa được quay. Các thao tác này không chứng minh thay cho mức độ hiểu mã của sinh viên.
+AI hỗ trợ đối chiếu đề PDF, chuẩn bị nguồn sạch, kiểm tra Sync/build, cập nhật tài liệu và push qua Android Studio sau khi sinh viên tự đăng nhập. Bản nguồn sạch build thành công; repo Public và clone HTTPS không đăng nhập thành công. Tại thời điểm kiểm chứng build sạch, video chưa được quay; hiện đã có link tại mục 10. Các thao tác này không chứng minh thay cho mức độ hiểu mã của sinh viên.
 
 ## 10. Video và hoàn tất nộp bài
 
-**Đường dẫn video: chưa bổ sung.** Chưa ghi hình bản nộp.
+**Video minh họa:** [Xem CinemaSeatMap trên Google Drive](https://drive.google.com/file/d/1ud7sisHo7c-ieBdUBEgtX4FrwLdEfzCY/view?usp=sharing).
 
-Kịch bản video gợi ý, khoảng 2–3 phút:
+Các chức năng minh họa trong video:
 
 1. Giới thiệu sơ đồ 200 đối tượng, phân khu, ba loại và các trạng thái.
 2. Pan và pinch hai ngón ra/vào, chạm chọn/bỏ chọn sau khi đổi góc nhìn.
@@ -190,15 +190,15 @@ Checklist còn lại trước khi nộp:
 - [x] README có dữ liệu, kiến trúc, tọa độ, hit-testing, trạng thái, hiệu năng và nhật ký AI.
 - [ ] Thử cảm giác pinch/pan trên điện thoại thật; kiểm tra thêm thiết bị/API nếu có.
 - [x] Clone GitHub công khai sang thư mục khác; đối chiếu mã với bản nguồn sạch đã build thành công trong Android Studio.
-- [ ] Quay video 1–5 phút, đưa đường dẫn truy cập được vào README.
+- [x] Đã hoàn thiện video minh họa và đưa đường dẫn vào README.
 - [ ] Rà yêu cầu lịch sử Git: đã có đủ số lượng commit, nhưng các commit hiện tập trung ngày 25/11/2026. Đề còn yêu cầu phân bổ trong thời gian thực hiện; không khẳng định đạt hoàn toàn chỉ dựa vào số lượng. Không sửa thời gian hoặc tạo commit rỗng.
 - [x] Push mã nguồn và tài liệu lên main; repository Public, truy cập không đăng nhập và clone HTTPS thành công.
-- [ ] Bổ sung video và kiểm tra quyền truy cập video khi sinh viên quay xong.
+- [x] Đã bổ sung link video; kiểm tra trang Google Drive truy cập được không đăng nhập.
 
 
 ## 11. Đối chiếu đề thi ngày 25/11/2026
 
-Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm cho thiết bị di động do giảng viên cung cấp. Video được để lại theo yêu cầu của sinh viên; mục này không khẳng định hồ sơ đã nộp.
+Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm cho thiết bị di động do giảng viên cung cấp. Video đã được sinh viên hoàn thiện và liên kết tại mục 10; mục này không khẳng định hồ sơ đã nộp.
 
 | Yêu cầu | Kết quả rà soát / bằng chứng |
 |---|---|
@@ -217,7 +217,7 @@ Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm ch
 | Tách dữ liệu/trạng thái/lớp vẽ | Seat/Repository, ViewModel, MapTransform và SeatMapView riêng |
 | Tái sử dụng tài nguyên đồ họa | Paint/Path/RectF/Shader/Typeface tạo ngoài onDraw; không dựng 200 View trên sơ đồ |
 | Build/chạy được | Đã build/cài/chạy qua Android Studio, 7 instrumentation tests đạt trên API 36 |
-| README và nhật ký AI | README có nhật ký AI tại mục 9; đường dẫn video chưa bổ sung |
+| README và nhật ký AI | README có nhật ký AI tại mục 9 và đường dẫn video tại mục 10 |
 | 5–7 commit có ý nghĩa, phân bổ trong thời gian thực hiện | Đủ số lượng; các commit hiện tập trung cùng ngày. Chưa thể xác nhận tiêu chí phân bổ thời gian; không sửa ngày hoặc tạo commit rỗng |
 | Repository và mã nguồn có thể truy cập để nộp | Đã push main, chuyển Public theo yêu cầu sinh viên; API không đăng nhập và clone HTTPS xác minh truy cập công khai |
 
@@ -227,7 +227,7 @@ Nguồn đối chiếu: đề thi giữa kỳ môn Phát triển phần mềm ch
 - Git clone cục bộ qua công cụ dòng lệnh bị lỗi helper MSYS; không gọi lượt này là clone thành công.
 - Gradle CLI tại bản xuất sạch dừng trước biên dịch vì báo project directory không ghi được trong môi trường thực thi giới hạn quyền. Lượt CLI này không được đánh dấu đạt; sau đó đã xác minh lại bằng Android Studio như kết quả cập nhật dưới đây.
 - Các build và 7 tests xác nhận ở trên được chạy bằng Android Studio/AndroidJUnitRunner trên bản dự án chính. Kiểm tra lại trên môi trường khác và điện thoại thật là khuyến nghị kiểm chứng thêm; không phải một chức năng bị thiếu trong đề.
-- Trạng thái chưa push/riêng tư ở lượt rà soát trước đã được giải quyết: các commit đã đẩy lên main, repo hiện Public và có thể clone không đăng nhập. Video vẫn do sinh viên thực hiện sau.
+- Trạng thái chưa push/riêng tư ở lượt rà soát trước đã được giải quyết: các commit đã đẩy lên main, repo hiện Public và có thể clone không đăng nhập. Video đã được sinh viên hoàn thiện; xem liên kết tại mục 10.
 
 ### Thông điệp commit
 
@@ -246,7 +246,7 @@ Nhật ký AI bổ sung: Codex rà lại toàn văn đề PDF, đối chiếu m�
 - Đối chiếu 61 file được Git theo dõi với commit: nội dung khớp sau chuẩn hóa LF/CRLF. Bản clone HTTPS từ GitHub cũng ở đúng commit `9269338`. Commit xác nhận tiếp theo chỉ cập nhật README, không thay đổi mã ứng dụng đã kiểm chứng.
 - Không coi lượt Gradle CLI bị giới hạn quyền là pass; bằng chứng build sạch là lượt Android Studio nêu trên. Bộ 7 instrumentation tests đạt ở mốc trước vẫn là bằng chứng kiểm thử chức năng hiện tại.
 - Nhật ký AI bổ sung: Codex chuẩn bị nguồn sạch, dùng Android Studio để Sync/build, push qua IDE sau khi sinh viên tự đăng nhập; công khai repo theo lựa chọn rõ ràng của sinh viên và kiểm tra bằng API/clone không xác thực. Sinh viên tự xác nhận Trust Project; không thay đổi ngoại lệ Defender để build.
-- Ngoài việc sinh viên quay/chèn đường dẫn video, các mục mã nguồn, build, tài liệu, số lượng commit và truy cập repo đã có bằng chứng xác minh; phân bổ commit theo thời gian vẫn cần đối chiếu quy định giảng viên. Thử trên điện thoại thật vẫn là khuyến nghị bổ sung.
+- Video đã được sinh viên hoàn thiện và bổ sung đường dẫn tại mục 10. Các mục mã nguồn, build, tài liệu, số lượng commit và truy cập repo đã có bằng chứng xác minh; phân bổ commit theo thời gian vẫn cần đối chiếu quy định giảng viên. Thử trên điện thoại thật vẫn là khuyến nghị bổ sung.
 
 ## 13. Hồ sơ nộp theo đề
 
@@ -254,9 +254,9 @@ Nhật ký AI bổ sung: Codex rà lại toàn văn đề PDF, đối chiếu m�
 |---|---|---|
 | GitHub Repository và mã nguồn biên dịch/chạy được | https://github.com/nguyenngocphucmkkt-cyber/DAGKPTPMTBDD | Public; đã kiểm chứng build nguồn sạch |
 | Lịch sử Git có ý nghĩa, phân bổ trong thời gian thực hiện | Lịch sử commit của repository | Đủ số lượng; cần lưu ý các commit tập trung cùng ngày |
-| README đủ nội dung mục 5.4 | README.md | Có nội dung kỹ thuật; thiếu đường dẫn video |
+| README đủ nội dung mục 5.4 | README.md | Có nội dung kỹ thuật và đường dẫn video tại mục 10 |
 | Nhật ký AI theo mục 5.5 | Mục 9 của README.md | Có nhiệm vụ/phần mã/hạn chế/kiểm chứng; sinh viên tự xác nhận nội dung đã tìm hiểu |
-| Video 01–05 phút | Chèn link tại mục 10 | Chưa thực hiện |
+| Video 01–05 phút | Link Google Drive tại mục 10 | Sinh viên đã hoàn thiện; trang video truy cập được không đăng nhập |
 
 Video cần thể hiện Pan, pinch hai ngón, chọn/bỏ chọn, lọc hoặc tìm kiếm, Bottom Sheet, đồng bộ trạng thái, Reset View và giữ trạng thái khi xoay màn hình. Kiểm tra quyền truy cập cả repo và video trước khi gửi.
 
